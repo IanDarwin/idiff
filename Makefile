@@ -1,7 +1,7 @@
-CFLAGS = -O -g
-
 all:	idiff
 
-install:	idiff
-			install idiff /usr/local/bin
-			install idiff.1 /usr/local/man/man1
+idiff:	idiff.c
+	$(CC) idiff.c -o idiff
+
+clean:
+	rm -f *.o a.out
