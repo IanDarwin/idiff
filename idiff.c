@@ -100,7 +100,7 @@ idiff(FILE *f1, FILE *f2, FILE *fin, FILE *fout)
 	assert(fin != NULL);
 	assert(fout != NULL);
 
-	(void) mktemp(strdup(tempfile));
+	(void) mkstemp(strdup(tempfile));
 	if ((ed=getenv("EDITOR")) == NULL)
 		ed = "/bin/ed";
 
