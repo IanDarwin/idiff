@@ -1,6 +1,6 @@
 /*
  * idiff - interactive diff
- * @(#)idiff.c	1.2 (Kernighan & Pike) 87/07/06
+ * @(#)idiff.c	1.3 (Kernighan & Pike) 88/03/31
  */
 
 #include <stdio.h>
@@ -182,7 +182,7 @@ onintr()
 #ifndef DEBUG
 	(void) unlink(tempfile);
 	(void) unlink(diffout);
-#endif DEBUG
+#endif	/* DEBUG */
 	exit(1);
 }
 
