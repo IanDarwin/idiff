@@ -1,6 +1,6 @@
 /*
  * idiff - interactive diff
- * @(#)idiff.c	1.1 (Kernighan & Pike) 87/07/06
+ * @(#)idiff.c	1.2 (Kernighan & Pike) 87/07/06
  */
 
 #include <stdio.h>
@@ -18,7 +18,7 @@ int	argc;
 char	*argv[];
 {
 	FILE *fin, *fout, *f1, *f2, *efopen();
-	char buf[BUFSIZ], *mktemp(), *sprintf();
+	char buf[BUFSIZ], *mktemp();
 	extern onintr();
 
 	progname = argv[0];
