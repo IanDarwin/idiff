@@ -4,36 +4,81 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <signal.h>
+#include <assert.h>
 
-#define HUGE 10000
+#define HUGE 1000000L
 
 char *progname;		/* every program should have one of these */
-char *diffout = "/tmp/idiff.XXXXXX";
-char *tempfile = "/tmp/idiff.XXXXXX";
+char *diffout = strdup("/tmp/idiff.XXXXXX");
+char *tempfile = strdup("/tmp/idiff.XXXXXX");
 
+FILE *
+efopen(char *fname, char *fmode)
+{
+	FILE *f = fopen(fname, fmode);
+	if (f == NULL) {
+		fprintf(stderr, "Unable to open %s mode %r\n", fname, fmode);
+		exit(1);
+	}
+}
+
+/* Interrupt handler */
+void
+onintr(int signum)
+{
+#ifndef DEBUG
+	(void) unlink(tempfile);
+	(void) unlink(diffout);
+#endif	/* DEBUG */
+	exit(1);
+}
+
+/* main method */
+int
 main(argc, argv)
 int	argc;
 char	*argv[];
 {
-	FILE *fin, *fout, *f1, *f2, *efopen();
-	char buf[BUFSIZ], *mktemp();
-	extern onintr();
+	FILE *fin, *fout, *f1, *f2;
+	char cmdBuf[1024], *mktemp(), *inname1, *inname2;
+	int c, errflg = 0;
+	extern int optind;
+	extern char *optarg;
+	int use_b = 0;		/* true --> use diff -b */
 
 	progname = argv[0];
-	if (argc != 3) {
+
+	while ((c = getopt(argc, argv, "b")) != EOF)
+		switch (c) {
+		case 'b':
+			use_b = 1;
+			break;
+		case '?':
+		default:
+			errflg++;
+			break;
+		}
+	if (errflg) {
+		(void) fprintf(stderr, "usage: %s xxx [file] ...\n", progname);
+		exit(2);
+	}
+	if (argc-optind != 2) {
 		fprintf(stderr, "usage: idiff file1 file2\n");
 		exit(1);
 	}
 	if (signal(SIGINT, SIG_IGN) != SIG_IGN)
 		(void) signal(SIGINT, onintr);
-	f1 = efopen(argv[1], "r");
-	f2 = efopen(argv[2], "r");
+	inname1 = argv[optind+0];
+	inname2 = argv[optind+1];
+	f1 = efopen(inname1, "r");
+	f2 = efopen(inname2, "r");
 	fout = efopen("idiff.out", "w");
 	(void) mktemp(diffout);
-	(void) sprintf(buf, "diff %s %s >%s", argv[1], argv[2], diffout);
-	(void) system(buf);
+	(void) sprintf(cmdBuf, "diff %s %s >%s", inname1, inname2, diffout);
+	(void) system(cmdBuf);
 	fin = efopen(diffout, "r");
 	idiff(f1, f2, fin, fout);
 	(void) unlink(diffout);
@@ -41,12 +86,17 @@ char	*argv[];
 	exit(0);
 }
 
-idiff(f1, f2, fin, fout)	/* process diffs */
-FILE *f1, *f2, *fin, *fout;
+/* process diffs */
+idiff(FILE *f1, FILE *f2, FILE *fin, FILE *fout)
 {
 	char buf[BUFSIZ], buf2[BUFSIZ], *mktemp(), *ed, *getenv();
 	FILE *ft, *efopen();
 	int cmd, n, from1, to1, from2, to2, nf1, nf2;
+
+	assert(f1 != NULL);
+	assert(f2 != NULL);
+	assert(fin != NULL);
+	assert(fout != NULL);
 
 	(void) mktemp(tempfile);
 	if ((ed=getenv("EDITOR")) == NULL)
@@ -148,6 +198,9 @@ FILE *fin, *fout;
 {
 	char buf[BUFSIZ];
 
+	assert(fin != NULL);
+	assert(fout != NULL);
+
 	while (n-- > 0) {
 		if (fgets(buf, sizeof buf, fin) == NULL)
 			return;
@@ -175,14 +228,5 @@ int *pcmd, *pfrom1, *pto1, *pfrom2, *pto2;
 		a2i(*pto2);
 	} else
 		*pto2 = *pfrom2;
-}
-
-onintr()
-{
-#ifndef DEBUG
-	(void) unlink(tempfile);
-	(void) unlink(diffout);
-#endif	/* DEBUG */
-	exit(1);
 }
 
