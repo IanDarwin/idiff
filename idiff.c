@@ -224,7 +224,7 @@ main(int argc, char	*argv[])
 	f1 = efopen(inname1, "r");
 	f2 = efopen(inname2, "r");
 	fout = efopen("idiff.out", "w");
-	(void) mktemp(strdup(diffout));
+	(void) mkstemp(strdup(diffout));
 	(void) sprintf(cmdBuf, "diff %s %s %s >%s", 
 		use_b ? "-b" : "",
 		inname1, inname2, diffout);
