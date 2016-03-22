@@ -1,0 +1,3 @@
+# idiff
+
+Kernighan &amp; Pike interactive diff, slightly enhanced.
