@@ -16,11 +16,59 @@ runs normal
 on the two files, displays one chunk of difference at a time,
 and lets you choose between the old version,
 the new version, or a version custom-blended by you using $EDITOR.
-.sp
-file1 (which must be a text file) is considered the "old" file.
-obj2 (which may be a file or a directory, using the same rules as
-regular diff) is considered the "new" file.
-.sp
+.Pp
+.Ar file1
+(which must be a text file) is considered the "old" file.
+.Ar obj2
+(which may be a file or a directory, using the same rules as regular 
+.Xr diff )
+is considered the "new" file.
+.Pp
+.Nm
+produces the selected pieces in the proper order in a file called
+.Em idiff.out .
+.Lp
+After each chunk is presented,
+.Nm
+will prompt the user (with a `? ')
+for a command.
+The valid commands are:
+.Pp
+.Sy <
+Take the ``from'' portion of the displayed chunk.
+This is the portion which
+was extracted from the first file specified.
+.Pp
+.Sy >
+Take the ``to'' portion of the displayed chunk.
+This corresponds to that
+extracted from the second file specified.
+.Pp
+.Sy e
+Invoke an editor on the chunk.
+The contents of shell variable EDITOR select the editor to be used.
+The default editor is
+.IR /bin/ed .
+Whatever is written out from
+.Em ed
+will be placed into the final output.
+.Pp
+.Sy q<
+Take all the rest of the '<' choices automatically.
+Think of this as ``quit from''.
+.Pp
+.Sy q>
+Take all the rest of the '>' choices automatically.
+Think of this as ``quit to''.
+.Pp
+.Sy !
+Pass the command buffer to the shell for processing.
+.Pp
+All code that
+.I diff
+considers identical in both input files 
+is automatically put into the output file.
+.Pp
 The arguments are as follows:
 .Bl -tag -width Ds
 .It Fl b
@@ -36,5 +84,13 @@ The output is stored into a file named
 .Nm
 was published in 1984 in the book
 .Em The UNIX Programming Environment.
+.Pp
+This manual page by Ian Darwin.
 .Sh AUTHORS
 Brian Kernighan and Rob Pike, Bell Laboratories.
+.Sh BUGS
+It is not possible to pass any options to
+.Nm diff
+through
+.Nm idiff.
+Nor can you use `-' as a filename argument.
