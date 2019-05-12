@@ -1,37 +1,40 @@
 .Dd 1988
-.Os OpenBSD 2.3
 .Dt IDIFF 1 UPM
+.Os
 .Sh NAME
-idiff \- interactive diff
+.Nm idiff
+.Nd interactive diff
 .Sh SYNOPSIS
-idiff
-[-b]
-file1 obj2
+.Nm idiff
+.Op Fl b
+.Ar file1
+.Ar path2
 .Sh DESCRIPTION
-The
-idiff
-program runs normal
-diff (1)
-for you, and lets you choose between the old version of each
-chunk, the new version, or a version custom-blended by you using $EDITOR.
+.Nm
+runs normal
+.Xr diff 1
+on the two files, displays one chunk of difference at a time,
+and lets you choose between the old version,
+the new version, or a version custom-blended by you using $EDITOR.
 .sp
 file1 (which must be a text file) is considered the "old" file.
 obj2 (which may be a file or a directory, using the same rules as
 regular diff) is considered the "new" file.
 .sp
-The 
--b
-option, if present, is simply passed on to the underlying 
-diff program.
-.Sh EXAMPLES
+The arguments are as follows:
+.Bl -tag -width Ds
+.It Fl b
+This option, if present, is simply passed on to the underlying 
+.Xr diff 1 ..
+.El
 .Sh FILES
 The output is stored into a file named
-idiff.out
+.Em idiff.out.
 .Sh SEE ALSO
-mgdiff (1X)
+.Xr diff 1
 .Sh HISTORY
-idiff was published in 1984 in the book
-The UNIX Programming Environment .
+.Nm
+was published in 1984 in the book
+.Em The UNIX Programming Environment.
 .Sh AUTHORS
 Brian Kernighan and Rob Pike, Bell Laboratories.
-.Sh BUGS
